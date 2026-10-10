@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Componentes Electrónicos - Potenciómetros, Tacómetros, Encoders y Amplificadores Operacionales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        nav {
+            background-color: #283593;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background-color: #5c6bc0;
+            transform: translateY(-2px);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        section h2 {
+            color: #1a237e;
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3949ab;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        section h2 .icon {
+            font-size: 1.2em;
+        }
+
+        section h3 {
+            color: #283593;
+            font-size: 1.4em;
+            margin: 30px 0 15px 0;
+        }
+
+        section h4 {
+            color: #3949ab;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0 20px 30px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border-left: 5px solid #3949ab;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .highlight-box h4 {
+            margin-top: 0;
+            color: #1a237e;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e0e4f5;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(57, 73, 171, 0.15);
+        }
+
+        .info-card h4 {
+            color: #1a237e;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        @media (max-width: 700px) {
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pros, .cons {
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .pros {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .cons {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .pros h4 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .cons h4 {
+            color: #c62828;
+            margin-top: 0;
+        }
+
+        .pros ul, .cons ul {
+            margin-left: 20px;
+        }
+
+        .formula {
+            background: #263238;
+            color: #eceff1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .application-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .application-item {
+            background: #f3f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .application-item::before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #3949ab;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9ff;
+        }
+
+        tr:hover {
+            background: #e8eaf6;
+        }
+
+        .symbol-display {
+            background: #fafafa;
+            border: 2px dashed #bdbdbd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .symbol-display svg {
+            max-width: 200px;
+        }
+
+        .note {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note strong {
+            color: #e65100;
+        }
+
+        footer {
+            background: #1a237e;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .toc {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: #1a237e;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 15px 0 0 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .toc a {
+            color: #3949ab;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .toc a:hover {
+            background: #e8eaf6;
+        }
+
+        .toc a::before {
+            content: "→";
+            color: #7986cb;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1> Guía de Componentes Electrónicos</h1>
+        <p>Todo lo que necesitas saber sobre Potenciómetros, Tacómetros, Encoders y Amplificadores Operacionales</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#potenciometros">Potenciómetros</a></li>
+            <li><a href="#tacometros">Tacómetros</a></li>
+            <li><a href="#encoders">Encoders</a></li>
+            <li><a href="#opamps">Amplificadores Op.</a></li>
+            <li><a href="index.html">Sensores y Sistemas de Control</a> </li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Tabla de Contenidos -->
+        <div class="toc">
+            <h3> Contenido</h3>
+            <ul>
+                <li><a href="#potenciometros">¿Qué es un Potenciómetro?</a></li>
+                <li><a href="#tipos-pot">Tipos de Potenciómetros</a></li>
+                <li><a href="#aplicaciones-pot">Aplicaciones</a></li>
+                <li><a href="#tacometros">¿Qué es un Tacómetro?</a></li>
+                <li><a href="#tipos-taco">Tipos de Tacómetros</a></li>
+                <li><a href="#encoders">¿Qué es un Encoder?</a></li>
+                <li><a href="#tipos-encoder">Tipos de Encoders</a></li>
+                <li><a href="#opamps">Amplificadores Operacionales</a></li>
+                <li><a href="#caracteristicas-opamp">Características Ideales</a></li>
+            </ul>
+        </div>
+
+        <!-- SECCIÓN POTENCIÓMETROS -->
+        <section id="potenciometros">
+            <h2><span class="icon"></span> Potenciómetros</h2>
+
+            <h3>¿Qué es un Potenciómetro?</h3>
+            <p>Un <strong>potenciómetro</strong> es un dispositivo conformado por <strong>2 resistencias en serie</strong>, las cuales poseen valores que pueden ser modificados por el usuario. Es, esencialmente, una resistencia variable que permite controlar el nivel de voltaje o corriente en un circuito.</p>
+
+            <div class="highlight-box">
+                <h4> Característica Principal</h4>
+                <p>Sea un potenciómetro común o un trimmer (potenciómetro de precisión), ambos dispositivos comparten una característica fundamental: <strong>tienen 3 terminales (o patas)</strong>.</p>
+            </div>
+
+            <h3>Estructura Interna</h3>
+            <p>A nivel interno, un potenciómetro son <strong>2 resistencias conectadas en serie</strong>. A partir del nodo que se forma entre estas dos resistencias tenemos un terminal, el cual normalmente será la pata del centro en un potenciómetro de 3 patas.</p>
+
+            <div class="symbol-display">
+                <h4>Símbolo del Potenciómetro</h4>
+                <img src="potenciometro.gif" alt="Descripción del GIF">
+                <p><em>Es básicamente el símbolo de una resistencia con una flecha que indica que podemos variar su valor</em></p>
+            </div>
+
+            <h3>Valores Estandarizados</h3>
+            <p>Los potenciómetros que encontramos en el mercado vienen con un valor de resistencia determinado. Estos valores han sido estandarizados:</p>
+            <ul>
+                <li>1K (1,000 Ω)</li>
+                <li>5K (5,000 Ω)</li>
+                <li>10K (10,000 Ω)</li>
+                <li>50K (50,000 Ω)</li>
+                <li>100K (100,000 Ω)</li>
+            </ul>
+            <p>Este valor de resistencia lo podemos medir entre las <strong>terminales 1 y 3</strong> del potenciómetro.</p>
+
+            <h3>¿Cómo Funciona?</h3>
+            <p>A medida que movemos la perilla, <strong>aumentamos un valor y reducimos el otro</strong> de forma tal que la suma de ambas siempre se mantendrá en una cantidad constante. Por eso al medir la resistencia en las terminales 1 y 3 el valor no varía, ya que la variación se da entre 1 y 2 y entre 2 y 3.</p>
+
+            <div class="note">
+                <strong> Nota:</strong> En el instante en el cual el potenciómetro se encuentra en el 50%, tendremos la misma resistencia en ambas resistencias internas.
+            </div>
+
+            <h3>Funcionamiento como Divisor de Tensión</h3>
+            <p>La capacidad de variar la resistencia entre 2 terminales y mantenerla entre sus extremos permite que los potenciómetros se utilicen como <strong>variadores de voltaje</strong>. Para esto se emplea un potenciómetro conectando las patas 1 y 3 a una fuente de voltaje y a tierra, respectivamente.</p>
+
+            <div class="formula">
+                <img src="potenciomero1.png" alt="Descripción del GIF">
+            </div>
+
+            <p>Donde:</p>
+            <ul>
+                <li><strong>Vx</strong> = Voltaje en el nodo central</li>
+                <li><strong>Vs</strong> = Voltaje de la fuente</li>
+                <li><strong>RA y RB</strong> = Las 2 resistencias que forman el potenciómetro</li>
+            </ul>
+
+            <h3>Tipos de Potenciómetros</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4> Potenciómetro Estándar</h4>
+                    <p>Dispositivo con perilla o deslizador para ajuste manual. Se usa en controles de volumen, brillo, etc.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Trimmer</h4>
+                    <p>Potenciómetro de precisión utilizado para ajustes finos en circuitos. Requiere herramienta para ajustar.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Potenciómetro Digital</h4>
+                    <p>No usa perilla; varía la resistencia en función de un circuito electrónico controlado digitalmente.</p>
+                </div>
+            </div>
+
+            <h3 id="aplicaciones-pot">Aplicaciones de los Potenciómetros</h3>
+            <div class="application-list">
+                <div class="application-item">Control de volumen en audio</div>
+                <div class="application-item">Control de brillo en pantallas</div>
+                <div class="application-item">Control de temperatura en termostatos</div>
+                <div class="application-item">Control de velocidad de motores</div>
+                <div class="application-item">Control de procesos industriales</div>
+                <div class="application-item">Instrumentos musicales eléctricos</div>
+                <div class="application-item">Control de intensidad de luces</div>
+                <div class="application-item">Realimentación en servomotores</div>
+            </div>
+
+            <h3>Uso como Resistencia Variable vs Divisor de Tensión</h3>
+            <table>
+                <tr>
+                    <th>Configuración</th>
+                    <th>Descripción</th>
+                    <th>Uso Típico</th>
+                </tr>
+                <tr>
+                    <td><strong>Resistencia Variable</strong></td>
+                    <td>Se usan 2 terminales consecutivas (central + un extremo)</td>
+                    <td>Limitar corriente, ajustar sensibilidad</td>
+                </tr>
+                <tr>
+                    <td><strong>Divisor de Tensión</strong></td>
+                    <td>Se usan las 3 terminales (extremos a Vcc y GND, salida en central)</td>
+                    <td>Establecer voltaje de referencia, control de volumen</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SECCIÓN TACÓMETROS -->
+        <section id="tacometros">
+            <h2><span class="icon"></span> Tacómetros</h2>
+
+            <h3>¿Qué es un Tacómetro?</h3>
+            <p>Un <strong>tacómetro</strong> es un dispositivo que mide la velocidad de funcionamiento de un motor en revoluciones por minuto (RPM). Es útil para aviones, automóviles y otros tipos de vehículos.</p>
+
+            <div class="highlight-box">
+                <h4> Etimología</h4>
+                <p>La palabra "tacómetro" proviene de las palabras griegas <em>tachos</em> (velocidad) y <em>metron</em> (medir). También se conoce popularmente como <strong>contador de revoluciones</strong>.</p>
+            </div>
+
+            <p>Estos dispositivos vienen en formas <strong>analógicas y digitales</strong>. Indican la velocidad del motor, lo que juega un papel vital en la determinación de la potencia del motor.</p>
+
+            <h3>¿Para qué sirve un Tacómetro?</h3>
+            <ul>
+                <li>Determinar qué tan duro está trabajando el motor del vehículo</li>
+                <li>Evaluar la condición general del motor</li>
+                <li>Determinar el rango de operación del motor</li>
+                <li>Prevenir que el motor exceda la velocidad máxima</li>
+                <li>Evaluar el rendimiento y consumo de combustible</li>
+                <li>Monitorear maquinaria industrial y agrícola</li>
+            </ul>
+
+            <h3>Tipos de Tacómetros</h3>
+
+            <h4>Según su Principio de Funcionamiento</h4>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4> Tacómetro Electrónico</h4>
+                    <p>Utiliza un captador magnético cerca del motor giratorio que genera pulsos eléctricos con frecuencia proporcional a la velocidad del motor. Ofrece lecturas numéricas y almacenamiento de datos.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Tacómetro Mecánico</h4>
+                    <p>Cuenta las RPM basándose en el período. Utiliza una serie de lengüetas que ayudan a identificar la velocidad del motor mediante fuerza centrífuga.</p>
+                </div>
+            </div>
+
+            <h4>Según su Técnica de Medición</h4>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4> Tacómetro Sin Contacto</h4>
+                    <p>También conocido como foto-tacómetro. No requiere contacto físico con el eje giratorio. Utiliza luz infrarroja o láser para medir la velocidad rotational.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Tacómetro de Contacto</h4>
+                    <p>Viene integrado o fijo con el motor eléctrico. Funciona haciendo que una rueda que gira libremente entre en contacto con el eje o disco giratorio.</p>
+                </div>
+            </div>
+
+            <h3>¿Cómo Funciona un Tacómetro?</h3>
+
+            <h4>Tacómetro Mecánico</h4>
+            <p>El eje giratorio se conecta con la parte de la transmisión del motor al indicador móvil mediante un cable flexible. El eje giratorio controla la posición de la aguja que indica la velocidad del motor.</p>
+
+            <h4>Tacómetro Electrónico</h4>
+            <p>Utiliza un captador magnético para producir pulsos eléctricos. El captador tiene una posición cerca de la parte giratoria del motor. Estimula los pulsos eléctricos a una frecuencia proporcional a la velocidad del motor. La circuitería convierte la frecuencia de pulso que muestra la frecuencia de RPM del motor mediante una lectura digital.</p>
+
+            <h3>Aplicaciones de los Tacómetros</h3>
+            <table>
+                <tr>
+                    <th>Aplicación</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><strong>Automóviles</strong></td>
+                    <td>Mide la velocidad del motor en RPM. Permite al conductor saber cuánta potencia puede usar en un momento dado.</td>
+                </tr>
+                <tr>
+                    <td><strong>Marinos</strong></td>
+                    <td>Mide las RPM del motor de una embarcación. Vital para conocer el consumo de combustible y velocidad máxima.</td>
+                </tr>
+                <tr>
+                    <td><strong>Industriales</strong></td>
+                    <td>Monitorea maquinaria de producción, generadores y equipos de fabricación.</td>
+                </tr>
+                <tr>
+                    <td><strong>Médicos</strong></td>
+                    <td>Utilizado en instrumentos médicos que requieren medición precisa de velocidad.</td>
+                </tr>
+            </table>
+
+            <h3>Guía de Compra: ¿Qué Considerar al Elegir un Tacómetro Digital?</h3>
+            <ol>
+                <li><strong>Tipo preferido:</strong> ¿Contacto o sin contacto? Los profesionales prefieren sin contacto por su conveniencia y precisión.</li>
+                <li><strong>Capacidad de medición:</strong> Verificar el rango de RPM que puede medir.</li>
+                <li><strong>Transferencia y almacenamiento de datos:</strong> Buscar opciones con USB o tarjeta SD.</li>
+                <li><strong>Otras mediciones:</strong> Algunos modelos también miden velocidad lineal y longitud.</li>
+                <li><strong>Alimentación:</strong> ¿Batería o enchufe? Los digitales ofrecen baterías reemplazables.</li>
+                <li><strong>Tipo de pantalla:</strong> Preferir pantallas retroiluminadas con brillo ajustable.</li>
+                <li><strong>Accesorios:</strong> Cinta reflectante, bolsa de transporte, cabezal adaptador.</li>
+            </ol>
+        </section>
+
+        <!-- SECCIÓN ENCODERS -->
+        <section id="encoders">
+            <h2><span class="icon"></span> Encoders</h2>
+
+            <h3>¿Qué es un Encoder y para qué sirve?</h3>
+            <p>Un <strong>encoder</strong> es un sensor que genera señales digitales en respuesta al movimiento. Los encoders están disponibles en dos tipos:</p>
+            <ul>
+                <li>Uno que responde a la <strong>rotación</strong></li>
+                <li>El otro al <strong>movimiento lineal</strong></li>
+            </ul>
+
+            <p>Los encoders están disponibles con diferentes tipos de salidas:</p>
+            <ul>
+                <li><strong>Encoders incrementales:</strong> Generan pulsos mientras se mueven, se utilizan para medir la velocidad o la trayectoria de posición.</li>
+                <li><strong>Encoders absolutos:</strong> Generan multi-bits digitales que indican directamente su posición actual.</li>
+            </ul>
+
+            <div class="note">
+                <strong>Importante:</strong> Cuando son usados en conjunto con dispositivos mecánicos tales como engranajes, ruedas de medición o flechas de motores, estos pueden ser utilizados para medir movimientos lineales, velocidad y posición.
+            </div>
+
+            <h3>Ejemplos de Aplicaciones de Encoders</h3>
+            <div class="application-list">
+                <div class="application-item">Dispositivo de control de puertas</div>
+                <div class="application-item">Robótica</div>
+                <div class="application-item">Máquinas de lente demoledor</div>
+                <div class="application-item">Plotter</div>
+                <div class="application-item">Máquinas de prueba</div>
+                <div class="application-item">Soldadura ultrasónica</div>
+                <div class="application-item">Maquinaria convertidora</div>
+                <div class="application-item">Máquinas de ensamblaje</div>
+                <div class="application-item">Máquinas etiquetadoras</div>
+                <div class="application-item">Indicación x/y</div>
+                <div class="application-item">Dispositivos de análisis</div>
+                <div class="application-item">Máquinas taladradoras</div>
+                <div class="application-item">Máquinas mezcladoras</div>
+                <div class="application-item">Equipo médico</div>
+            </div>
+
+            <h3 id="tipos-encoder">Tipos de Encoders y Cómo Funcionan</h3>
+
+            <h4>A. Encoder Incremental (Codificación Incremental)</h4>
+            <p>Los encoders incrementales proveen un número específico de <strong>pulsos equitativamente espaciados por revolución (PPR)</strong> o por pulgada o milímetro de movimiento lineal.</p>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Unidireccional</h4>
+                    <p>Se utiliza un solo canal de salida para aplicaciones donde el sentido de la dirección de movimiento no es importante.</p>
+                </div>
+                <div class="info-card">
+                    <h4>Bidireccional (Cuadratura)</h4>
+                    <p>Utiliza dos canales de 90 grados eléctricos fuera de fase. El circuito determina la dirección de movimiento basado en la fase de relación entre ellos.</p>
+                </div>
+            </div>
+
+            <p>La <strong>salida en cuadratura</strong> permite la supervisión de los procesos que pueden revertir la dirección, o que deben mantener la posición neta cuando está parado o oscilante mecánicamente. La cuadratura bidireccional se recomienda para la mayoría de aplicaciones de posición, velocidad y de longitud.</p>
+
+            <div class="note">
+                <strong> Importante:</strong> Una salida de un encoder incremental indica movimiento. Para determinar la posición, sus pulsos deben ser acumulados por un contador. Esta cuenta solo se produce una vez por revolución del eje. La cuenta está sujeta a pérdida durante una interrupción de energía.
+            </div>
+
+            <h4>Tipos de Circuitos de Salida</h4>
+            <ul>
+                <li><strong>Current sinking:</strong> Para distancias cortas sin interferencia</li>
+                <li><strong>Current sourcing:</strong> Para distancias cortas sin interferencia</li>
+                <li><strong>Push-pull:</strong> Para distancias cortas sin interferencia</li>
+                <li><strong>Diferencial:</strong> Para transmisión de larga distancia y/o cuando hay altos niveles de interferencias eléctricas</li>
+            </ul>
+
+            <h4>Ventajas y Desventajas del Encoder Incremental</h4>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>✓ Ventajas</h4>
+                    <ul>
+                        <li>Inherentemente digitales, fácil interconexión con dispositivos modernos</li>
+                        <li>Bajo costo y fácil de usar</li>
+                        <li>Buena resolución para el costo</li>
+                        <li>Salida digital diferencial más inmune al ruido</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>✗ Desventajas</h4>
+                    <ul>
+                        <li>La posición absoluta es desconocida</li>
+                        <li>Si se pierde la alimentación, la posición se pierde</li>
+                        <li>Rango de temperatura de funcionamiento menor</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h4>B. Encoder Absoluto (Codificación Absoluta)</h4>
+            <p>Un encoder absoluto genera mensajes digitales que representan la <strong>posición actual</strong> del encoder, así como su velocidad y dirección de movimiento. Si la energía se pierde, su salida será corregida cada vez que la energía sea restablecida.</p>
+
+            <div class="highlight-box">
+                <h4> Característica Clave</h4>
+                <p>No es necesario ir a una posición referencial como con los encoders de tipo incremental. La resolución de un encoder absoluto es definida como el <strong>número de bits por mensaje de salida</strong>.</p>
+            </div>
+
+            <p>La salida puede ser directamente en <strong>código binario o Gray</strong>, el cual produce un cambio de un solo bit en cada paso para reducir errores. El tipo "absoluto" produce un código digital único para cada ángulo distinto del eje.</p>
+
+            <h4>Encoder SinCos</h4>
+            <p>La resolución de un encoder SinCos es dependiente de la frecuencia de la señal sinusoidal de onda y la tensión diferencial de pico a pico del encoder. Al igual que con los encoders convencionales SinCos rotativos, un encoder lineal SinCos también está disponible.</p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>✓ Ventajas del SinCos</h4>
+                    <ul>
+                        <li>Alta resolución se puede lograr con la interpolación dentro de la unidad</li>
+                        <li>Se utilizan con encoders Comms para proporcionar señales incrementales</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>✗ Desventajas del SinCos</h4>
+                    <ul>
+                        <li>Posición absoluta es desconocida</li>
+                        <li>Sensible al ruido debido a la naturaleza analógica de la señal</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN AMPLIFICADORES OPERACIONALES -->
+        <section id="opamps">
+            <h2><span class="icon"></span> Amplificadores Operacionales (Op-Amps)</h2>
+
+            <h3>¿Qué es un Amplificador Operacional?</h3>
+            <p>Un <strong>amplificador operacional</strong> (op-amp) es un dispositivo de dos entradas y una salida utilizado como bloque de construcción básico de circuitos analógicos. Es fundamentalmente un dispositivo amplificador de voltaje diseñado para ser usado con componentes de retroalimentación externos.</p>
+
+            <div class="highlight-box">
+                <h4> Definición</h4>
+                <p>Un amplificador operacional es un dispositivo lineal que tiene todas las propiedades requeridas para una amplificación DC casi ideal. Se utilizan extensivamente en acondicionamiento de señales, filtrado, o para realizar operaciones matemáticas como suma, resta, integración y diferenciación.</p>
+            </div>
+
+            <h3>Estructura del Op-Amp</h3>
+            <p>Un amplificador operacional es básicamente un dispositivo de <strong>tres terminales</strong> que consiste en dos entradas de alta impedancia:</p>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4> Entrada Inversora</h4>
+                    <p>Marcada con un signo negativo o "menos" (-). La señal de salida estará desfasada 180° respecto a esta entrada.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Entrada No Inversora</h4>
+                    <p>Marcada con un signo positivo o "más" (+). La señal de salida estará en fase con esta entrada.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Terminal de Salida</h4>
+                    <p>Puede tanto suministrar como absorber voltaje o corriente.</p>
+                </div>
+            </div>
+
+            <h3>Clasificación de Amplificadores Operacionales</h3>
+            <table>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                </tr>
+                <tr>
+                    <td><strong>Amplificador de Voltaje</strong></td>
+                    <td>Voltaje</td>
+                    <td>Voltaje</td>
+                </tr>
+                <tr>
+                    <td><strong>Amplificador de Corriente</strong></td>
+                    <td>Corriente</td>
+                    <td>Corriente</td>
+                </tr>
+                <tr>
+                    <td><strong>Amplificador de Transconductancia</strong></td>
+                    <td>Voltaje</td>
+                    <td>Corriente</td>
+                </tr>
+                <tr>
+                    <td><strong>Amplificador de Transresistencia</strong></td>
+                    <td>Corriente</td>
+                    <td>Voltaje</td>
+                </tr>
+            </table>
+
+            <h3>El Par Diferencial</h3>
+            <p>La etapa de entrada de un amplificador operacional es en realidad un <strong>amplificador diferencial</strong>. La señal de salida es la diferencia entre las dos señales de entrada.</p>
+
+            <p>El circuito opera con una fuente dual +Vcc y -Vee que asegura un suministro constante. El voltaje que aparece en la salida es la diferencia entre las dos señales de entrada, ya que las dos entradas de base están en antifase.</p>
+
+            <h3 id="caracteristicas-opamp">Características del Amplificador Operacional Ideal</h3>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4> Ganancia en Lazo Abierto (Avo)</h4>
+                    <p><strong>Infinita</strong> - La función principal es amplificar la señal de entrada. Valores reales: 20,000 a 200,000.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Impedancia de Entrada (ZIN)</h4>
+                    <p><strong>Infinita</strong> - Para prevenir que fluya corriente desde la fuente hacia el circuito de entrada. Valores reales: pico-amperios a mili-amperios.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Impedancia de Salida (ZOUT)</h4>
+                    <p><strong>Cero</strong> - Actúa como una fuente de voltaje perfecta sin resistencia interna. Valores reales: 100-20kΩ.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Ancho de Banda (BW)</h4>
+                    <p><strong>Infinito</strong> - Puede amplificar cualquier frecuencia desde DC hasta las frecuencias AC más altas. Real: limitado por el producto Ganancia-Ancho de Banda.</p>
+                </div>
+                <div class="info-card">
+                    <h4> Voltaje de Offset (VIO)</h4>
+                    <p><strong>Cero</strong> - La salida será cero cuando la diferencia entre entradas sea cero. Reales: tienen algo de offset.</p>
+                </div>
+            </div>
+
+            <div class="note">
+                <strong> Reglas Importantes:</strong>
+                <ul style="margin-top: 10px;">
+                    <li><strong>Regla de Corriente:</strong> No fluye corriente hacia ninguno de los terminales de entrada</li>
+                    <li><strong>Regla de Voltaje:</strong> El voltaje de offset de entrada diferencial es cero</li>
+                </ul>
+            </div>
+
+            <h3>Producto Ganancia-Ancho de Banda (GBP)</h3>
+            <p>De la curva de respuesta en frecuencia podemos ver que el producto de la ganancia contra la frecuencia es constante en cualquier punto a lo largo de la curva.</p>
+
+            <div class="formula">
+                GBP = Ganancia × Ancho de Banda = A × BW
+            </div>
+
+            <p><strong>Ejemplo:</strong> Si la ganancia del amplificador a 100kHz es 20dB o 10, entonces:</p>
+            <div class="formula">
+                GBP = 10 × 100,000Hz = 1,000,000
+            </div>
+
+            <h3>Fórmulas Útiles</h3>
+            <div class="highlight-box">
+                <h4>Ganancia de Voltaje</h4>
+                <div class="formula">AV = Vout / Vin</div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>Ganancia en Decibelios</h4>
+                <div class="formula">Ganancia (dB) = 20 log (A)</div>
+            </div>
+
+            <h3>Ancho de Banda del Amplificador Operacional</h3>
+            <p>El ancho de banda del amplificador operacional es el rango de frecuencia sobre el cual la ganancia de voltaje del amplificador está por encima del 70.7% o -3dB de su valor máximo de salida.</p>
+
+            <div class="highlight-box">
+                <h4> Ejemplo de Cálculo</h4>
+                <p>Si tenemos una ganancia de 40dB y queremos encontrar el ancho de banda:</p>
+                <ol>
+                    <li>37 = 20 log (A), por lo tanto A = anti-log (37 ÷ 20) = 70.8</li>
+                    <li>GBP ÷ A = Ancho de Banda</li>
+                    <li>1,000,000 ÷ 70.8 = 14,124Hz o 14kHz</li>
+                </ol>
+            </div>
+
+            <div class="note">
+                <strong> Relación Importante:</strong> El ancho de banda de un amplificador operacional es <strong>inversamente proporcional a su ganancia</strong>. Al reducir la ganancia, el ancho de banda aumenta.
+            </div>
+
+            <h3>El μA741 - El Estándar de la Industria</h3>
+            <p>El μA741 es un amplificador operacional de propósito general ideal para aprender sobre los fundamentos de amplificadores operacionales. Está disponible en paquetes IC dual-in-line y es el más comúnmente usado en kits de electrónica básica.</p>
+
+            <h3>Resumen de Amplificadores Operacionales</h3>
+            <p>Un amplificador operacional es un amplificador diferencial DC de muy alta ganancia que requiere una o más redes de retroalimentación externas para controlar su ganancia de voltaje, respuesta en frecuencia y otras características eléctricas.</p>
+
+            <p>Podemos conectar resistencias y/o capacitores externamente alrededor de un amplificador operacional de varias maneras diferentes para formar circuitos básicos como:</p>
+            <ul>
+                <li>Amplificador Inversor</li>
+                <li>Amplificador No Inversor</li>
+                <li>Seguidor de Voltaje</li>
+                <li>Sumador</li>
+                <li>Diferencial</li>
+                <li>Integrador</li>
+                <li>Diferenciador</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p> Guía de Componentes Electrónicos</p>
+        <p>Contenido basado en: Panama Hitek, Tesca Global, Servo Motors Adjust, Electronics Tutorials</p>
+        <p style="margin-top: 15px; font-size: 0.9em;">© 2026 - Guía Educativa de Electrónica</p>
+    </footer>
+
+    <script>
+        // Smooth scrolling para los enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

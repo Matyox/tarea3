@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sensores y Control - Potenciómetros, Tacómetros, Encoders y Amp. Operacionales</title>
+<style>
+  :root{
+    --primary:#0d47a1;
+    --secondary:#1976d2;
+    --accent:#00bcd4;
+    --dark:#0a1929;
+    --light:#e3f2fd;
+    --success:#2e7d32;
+    --warn:#ef6c00;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    background:linear-gradient(135deg,#0a1929 0%,#0d47a1 100%);
+    color:#212121;
+    line-height:1.7;
+    min-height:100vh;
+  }
+  header{
+    background:linear-gradient(90deg,#0a1929,#0d47a1,#1976d2);
+    color:#fff;
+    padding:60px 20px 40px;
+    text-align:center;
+    border-bottom:4px solid var(--accent);
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
+  }
+  header h1{font-size:2.6rem;margin-bottom:10px;text-shadow:2px 2px 8px #000;}
+  header p{font-size:1.15rem;opacity:.9;max-width:900px;margin:0 auto;}
+  nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(10,25,41,.95);
+    backdrop-filter:blur(10px);
+    padding:12px;
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+    border-bottom:2px solid var(--accent);
+  }
+  nav a{
+    color:#fff;text-decoration:none;padding:8px 16px;
+    border-radius:20px;transition:.3s;font-weight:600;font-size:.95rem;
+  }
+  nav a:hover{background:var(--accent);color:var(--dark);transform:translateY(-2px);}
+  main{max-width:1200px;margin:0 auto;padding:30px 20px 80px;}
+  section{
+    background:var(--card);border-radius:16px;padding:35px 30px;
+    margin-bottom:40px;box-shadow:0 10px 40px rgba(0,0,0,.3);
+    border-left:6px solid var(--primary);
+  }
+  section h2{
+    color:var(--primary);font-size:2rem;margin-bottom:20px;
+    border-bottom:3px solid var(--light);padding-bottom:10px;
+    display:flex;align-items:center;gap:12px;
+  }
+  section h3{color:var(--secondary);margin:25px 0 12px;font-size:1.35rem;}
+  section h4{color:var(--dark);margin:18px 0 8px;font-size:1.1rem;}
+  p{margin-bottom:12px;text-align:justify;}
+  ul,ol{margin:12px 0 12px 30px;}
+  li{margin-bottom:8px;}
+  .formula{
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+    border-left:5px solid var(--secondary);
+    padding:15px 20px;margin:15px 0;border-radius:8px;
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:1.1rem;overflow-x:auto;
+  }
+  .formula strong{color:var(--primary);}
+  .highlight{
+    background:#fff9c4;padding:2px 8px;border-radius:4px;font-weight:600;
+  }
+  table{
+    width:100%;border-collapse:collapse;margin:18px 0;
+    box-shadow:0 4px 15px rgba(0,0,0,.1);border-radius:8px;overflow:hidden;
+  }
+  th{background:var(--primary);color:#fff;padding:12px;text-align:left;}
+  td{padding:10px 12px;border-bottom:1px solid #e0e0e0;background:#fafafa;}
+  tr:hover td{background:var(--light);}
+  /* Ejercicios */
+  .ejercicio{
+    background:#f5f7fa;border:2px solid #cfd8dc;border-radius:12px;
+    padding:20px;margin:20px 0;transition:.3s;
+  }
+  .ejercicio:hover{border-color:var(--secondary);box-shadow:0 6px 20px rgba(25,118,210,.2);}
+  .ejercicio h4{color:var(--warn);display:flex;align-items:center;gap:8px;}
+  .btn-sol{
+    background:linear-gradient(135deg,var(--secondary),var(--accent));
+    color:#fff;border:none;padding:10px 22px;border-radius:8px;
+    cursor:pointer;font-weight:700;font-size:.95rem;margin-top:12px;
+    transition:.3s;box-shadow:0 4px 12px rgba(25,118,210,.4);
+  }
+  .btn-sol:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(25,118,210,.6);}
+  .btn-sol:active{transform:translateY(0);}
+  .solucion{
+    display:none;margin-top:15px;padding:18px;
+    background:linear-gradient(135deg,#e8f5e9,#c8e6c9);
+    border-left:5px solid var(--success);border-radius:8px;
+    animation:slideDown .4s ease;
+  }
+  .solucion.show{display:block;}
+  @keyframes slideDown{
+    from{opacity:0;transform:translateY(-10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .solucion .paso{
+    background:#fff;padding:10px 14px;margin:8px 0;
+    border-radius:6px;border-left:3px solid var(--success);
+    font-family:'Consolas',monospace;
+  }
+  .badge{
+    display:inline-block;background:var(--accent);color:var(--dark);
+    padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700;
+    margin-left:8px;text-transform:uppercase;
+  }
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:768px){
+    .grid-2{grid-template-columns:1fr;}
+    header h1{font-size:1.8rem;}
+    section{padding:22px 18px;}
+  }
+  .nota{
+    background:#fff3e0;border-left:5px solid var(--warn);
+    padding:14px 18px;border-radius:8px;margin:15px 0;
+  }
+  .nota strong{color:var(--warn);}
+  footer{
+    background:var(--dark);color:#90caf9;text-align:center;
+    padding:30px 20px;border-top:4px solid var(--accent);
+  }
+  .svg-box{
+    background:#fff;padding:15px;border-radius:10px;
+    border:2px dashed var(--secondary);margin:15px 0;text-align:center;
+  }
+  .sim{
+    background:#0a1929;color:#00e676;font-family:'Consolas',monospace;
+    padding:15px;border-radius:8px;margin:15px 0;font-size:.9rem;
+    overflow-x:auto;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1> Sensores y Sistemas de Control</h1>
+  <p>Potenciómetros · Tacómetros · Encoders · Amplificadores Operacionales<br>
+  Teoría completa + Ejercicios interactivos + Análisis de ganancia y función de transferencia</p>
+</header>
+
+<nav>
+  <a href="#potenciometros">Potenciómetros</a>
+  <a href="#tacometros">Tacómetros</a>
+  <a href="#encoders">Encoders</a>
+  <a href="#opamps">Amp. Operacionales</a>
+  <a href="#control">Sist. de Control</a>
+  <a href="Definiciones_tacometros_encoders_potenciometros.html">Definiciones puntuales</a>
+</nav>
+
+<main>
+
+<!-- ============================================================
+     1. POTENCIÓMETROS
+============================================================ -->
+<section id="potenciometros">
+  <h2> 1. Potenciómetros</h2>
+
+  <h3>1.1 Definición</h3>
+  <p>Un <span class="highlight">potenciómetro</span> es una resistencia variable de tres terminales con un contacto deslizante (cursor o wiper). Funciona como un <strong>divisor de tensión ajustable</strong>. Se usa ampliamente como sensor de posición angular o lineal en lazos de control.</p>
+
+  <h3>1.2 Principio de funcionamiento</h3>
+  <p>Sea <em>V<sub>in</sub></em> la tensión aplicada entre los extremos de la resistencia total <em>R<sub>p</sub></em>. Si el cursor está a una fracción <em>x</em> (0 ≤ x ≤ 1) de recorrido, la tensión de salida es:</p>
+
+  <div class="formula">
+    <strong>V<sub>out</sub> = x · V<sub>in</sub></strong> &nbsp;&nbsp;donde&nbsp;&nbsp; x = θ/θ<sub>max</sub> = R<sub>x</sub>/R<sub>p</sub>
+  </div>
+
+  <p>La <strong>función de transferencia estática</strong> respecto al ángulo θ es:</p>
+
+  <div class="formula">
+    G<sub>p</sub>(θ) = V<sub>out</sub>/V<sub>in</sub> = θ/θ<sub>max</sub> &nbsp;&nbsp;[V/V] &nbsp;&nbsp;ó&nbsp;&nbsp; K<sub>p</sub> = V<sub>in</sub>/θ<sub>max</sub> &nbsp;[V/rad]
+  </div>
+
+  <p>Donde <strong>K<sub>p</sub></strong> es la <span class="highlight">ganancia del sensor</span> (sensibilidad).</p>
+
+  <h3>1.3 Tipos</h3>
+  <table>
+    <tr><th>Tipo</th><th>Ley</th><th>Aplicación</th></tr>
+    <tr><td>Lineal (B)</td><td>R(x) = R<sub>p</sub>·x</td><td>Sensores de posición</td></tr>
+    <tr><td>Logarítmica (A)</td><td>R(x) = R<sub>p</sub>·10<sup>kx</sup></td><td>Audio (volumen)</td></tr>
+    <tr><td>Antilogarítmica (C)</td><td>R(x) = R<sub>p</sub>·10<sup>-kx</sup></td><td>Compensación</td></tr>
+  </table>
+
+  <h3>1.4 Modelo en lazo de control</h3>
+  <p>En un sistema de control de posición, el potenciómetro actúa como <strong>transductor de realimentación</strong>. Si se usa en un puente de Wheatstone o como divisor, su función de transferencia dinámica es prácticamente estática (ancho de banda muy alto, sin retardo significativo).</p>
+
+  <div class="svg-box">
+ <img src="pot2.gif" alt="Descripción del GIF">
+  </div>
+
+  <!-- EJERCICIOS POTENCIÓMETRO -->
+  <h3>1.5 Ejercicios resueltos</h3>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 1.1 <span class="badge">Básico</span></h4>
+    <p>Un potenciómetro lineal de 10 kΩ se conecta a V<sub>in</sub> = 12 V. Si el cursor está al 35 % del recorrido, ¿cuál es V<sub>out</sub>? ¿Cuál es la ganancia del sensor K<sub>p</sub> si el recorrido total es 300°?</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> V_out = x · V_in = 0.35 · 12 V</div>
+      <div class="paso"><strong>Paso 2:</strong> V_out = <strong>4.2 V</strong></div>
+      <div class="paso"><strong>Paso 3:</strong> θ = 0.35 · 300° = 105° = 1.833 rad</div>
+      <div class="paso"><strong>Paso 4:</strong> K_p = V_in/θ_max = 12 V / (300°·π/180) = 12/5.236 = <strong>2.29 V/rad</strong></div>
+      <div class="paso"><strong>Alternativa:</strong> K_p = V_out/θ = 4.2/1.833 = 2.29 V/rad ✓</div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 1.2 <span class="badge">Control</span></h4>
+    <p>En un lazo de control de posición, el potenciómetro de realimentación tiene θ<sub>max</sub> = 360° y V<sub>ref</sub> = 10 V. La referencia deseada es θ<sub>d</sub> = 90°. Calcule: (a) la tensión de referencia V<sub>ref,d</sub>; (b) el error de tensión si la salida real está a 85°.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>(a)</strong> V_ref,d = (90/360)·10 = <strong>2.5 V</strong></div>
+      <div class="paso"><strong>(b)</strong> V_real = (85/360)·10 = 2.361 V</div>
+      <div class="paso">Error = V_ref,d − V_real = 2.5 − 2.361 = <strong>0.139 V</strong></div>
+      <div class="paso">En ángulo: 5° de error → el controlador debe corregir.</div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong> Nota de control:</strong> Los potenciómetros tienen <em>ruido por fricción</em> y desgaste. Su ganancia es esencialmente estática, pero su función de transferencia dinámica puede modelarse como G(s) = K<sub>p</sub> (sistema de orden cero). Para mayor precisión se prefieren encoders.
+  </div>
+</section>
+
+<!-- ============================================================
+     2. TACÓMETROS
+============================================================ -->
+<section id="tacometros">
+  <h2> 2. Tacómetros</h2>
+
+  <h3>2.1 Definición</h3>
+  <p>Un <span class="highlight">tacómetro</span> es un sensor que mide la <strong>velocidad angular</strong> (ω) de un eje. Su salida puede ser analógica (tensión proporcional a ω) o digital (pulsos).</p>
+
+  <h3>2.2 Tacómetro de CC (generador tacométrico)</h3>
+  <p>Es una máquina de CC pequeña que funciona como generador. La tensión inducida es proporcional a la velocidad:</p>
+
+  <div class="formula">
+    <strong>V<sub>out</sub> = K<sub>e</sub> · ω</strong> &nbsp;&nbsp;[V] &nbsp;&nbsp;→&nbsp;&nbsp; K<sub>e</sub> = constante de fem [V·s/rad]
+  </div>
+
+  <p>Su <strong>función de transferencia</strong> ideal:</p>
+
+  <div class="formula">
+    G<sub>t</sub>(s) = V<sub>out</sub>(s)/ω(s) = K<sub>e</sub>
+  </div>
+
+  <p>En la práctica tiene un polo por la constante de tiempo eléctrica τ = L/R:</p>
+
+  <div class="formula">
+    G<sub>t</sub>(s) = K<sub>e</sub> / (τ·s + 1)
+  </div>
+
+  <h3>2.3 Tacómetro digital (óptico / magnético)</h3>
+  <p>Genera N pulsos por revolución. La frecuencia de salida es:</p>
+
+  <div class="formula">
+    f = N · (ω / 2π) = N · n / 60 &nbsp;&nbsp;[Hz]
+  </div>
+
+  <p>Y la tensión tras un conversor F/V:</p>
+
+  <div class="formula">
+    V<sub>out</sub> = K<sub>f</sub> · f = K<sub>f</sub> · N · ω / (2π)
+  </div>
+
+  <h3>2.4 Aplicación en lazos de control</h3>
+  <p>El tacómetro se usa como <strong>realimentación de velocidad</strong> (control tipo proporcional-derivativo). En un motor de CC:</p>
+
+  <div class="formula">
+    ω(s)/V<sub>a</sub>(s) = K<sub>m</sub> / [(J·s + b)(L·s + R) + K<sub>e</sub>·K<sub>m</sub>]
+  </div>
+
+  <p>El tacómetro introduce una realimentación que <strong>aumenta el amortiguamiento</strong> y reduce el sobreimpulso.</p>
+
+  <div class="svg-box">
+    <img src="tacometro.png" alt="Descripción del GIF">
+    <p style="font-size:.85rem;color:#555;">Lazo de control de velocidad con tacómetro como realimentación</p>
+  </div>
+
+  <!-- EJERCICIOS TACÓMETRO -->
+  <h3>2.5 Ejercicios resueltos</h3>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 2.1 <span class="badge">Básico</span></h4>
+    <p>Un tacómetro de CC tiene K<sub>e</sub> = 0.05 V·s/rad. Si el eje gira a 1500 rpm, ¿cuál es la tensión de salida?</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> Convertir rpm a rad/s: ω = 1500·2π/60 = 157.08 rad/s</div>
+      <div class="paso"><strong>Paso 2:</strong> V_out = K_e·ω = 0.05·157.08</div>
+      <div class="paso"><strong>Resultado:</strong> V_out = <strong>7.854 V</strong></div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 2.2 <span class="badge">Control</span></h4>
+    <p>Un motor de CC tiene función de transferencia G(s) = 10/[(s+1)(s+2)] con realimentación unitaria. Se añade un tacómetro con ganancia K<sub>t</sub> en realimentación (realimentación de velocidad). Determine K<sub>t</sub> para obtener un factor de amortiguamiento ζ = 0.7.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> G(s) = 10/(s²+3s+2)</div>
+      <div class="paso"><strong>Paso 2:</strong> Con realimentación H(s) = 1 + K_t·s, la función de lazo cerrado es:</div>
+      <div class="paso">T(s) = 10 / [s² + (3+10K_t)s + 2 + 10] = 10/(s² + (3+10K_t)s + 12)</div>
+      <div class="paso"><strong>Paso 3:</strong> Comparando con s² + 2ζω_n s + ω_n²: ω_n² = 12 → ω_n = 3.464 rad/s</div>
+      <div class="paso"><strong>Paso 4:</strong> 2ζω_n = 3 + 10K_t → 2·0.7·3.464 = 4.85</div>
+      <div class="paso"><strong>Paso 5:</strong> 10K_t = 4.85 − 3 = 1.85 → <strong>K_t = 0.185</strong></div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 2.3 <span class="badge">Avanzado</span></h4>
+    <p>Un tacómetro óptico tiene N = 60 ranuras. Si se mide una frecuencia de salida de 2.4 kHz, ¿cuál es la velocidad angular en rpm?</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> f = N·n/60 → n = 60·f/N</div>
+      <div class="paso"><strong>Paso 2:</strong> n = 60·2400/60 = <strong>2400 rpm</strong></div>
+      <div class="paso">Alternativa: ω = 2πf/N = 2π·2400/60 = 251.3 rad/s = 2400 rpm ✓</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. ENCODERS
+============================================================ -->
+<section id="encoders">
+  <h2> 3. Encoders</h2>
+
+  <h3>3.1 Definición</h3>
+  <p>Un <span class="highlight">encoder</span> es un sensor digital que convierte movimiento angular o lineal en pulsos digitales. Es el sensor de posición/velocidad más usado en control moderno.</p>
+
+  <h3>3.2 Tipos</h3>
+  <table>
+    <tr><th>Tipo</th><th>Salida</th><th>Resolución</th><th>Uso</th></tr>
+    <tr><td>Incremental</td><td>Pulsos A, B, Z</td><td>N pulsos/vuelta</td><td>Velocidad, posición relativa</td></tr>
+    <tr><td>Absoluto</td><td>Código binario/Gray</td><td>2<sup>n</sup> posiciones</td><td>Posición absoluta</td></tr>
+    <tr><td>Cuadratura</td><td>A, B desfasados 90°</td><td>4×N cuentas</td><td>Dirección + velocidad</td></tr>
+  </table>
+
+  <h3>3.3 Resolución y ganancia</h3>
+  <p>Resolución angular por pulso:</p>
+  <div class="formula">
+    Δθ = 360°/N &nbsp;&nbsp;ó&nbsp;&nbsp; Δθ = 2π/N &nbsp;[rad]
+  </div>
+
+  <p>Con decodificación en cuadratura (x4):</p>
+  <div class="formula">
+    Δθ = 360°/(4N) = 90°/N
+  </div>
+
+  <p><strong>Ganancia del encoder</strong> (pulsos por radián):</p>
+  <div class="formula">
+    K<sub>enc</sub> = N/2π &nbsp;[pulsos/rad] &nbsp;&nbsp;ó&nbsp;&nbsp; K<sub>enc</sub> = 4N/2π &nbsp;[cuentas/rad]
+  </div>
+
+  <h3>3.4 Cálculo de velocidad por encoder</h3>
+  <p><strong>Método M (frecuencia):</strong> contar pulsos en tiempo fijo T:</p>
+  <div class="formula">
+    ω = 2π · (ΔN / N) / T &nbsp;[rad/s]
+  </div>
+
+  <p><strong>Método T (periodo):</strong> medir tiempo entre pulsos:</p>
+  <div class="formula">
+    ω = 2π / (N · Δt)
+  </div>
+
+  <p><strong>Método M/T (combinado):</strong> para amplio rango de velocidades.</p>
+
+  <h3>3.5 Función de transferencia en control</h3>
+  <p>El encoder es un sensor <strong>discreto</strong>. Su modelo en el lazo es un cuantizador. La ganancia equivalente:</p>
+  <div class="formula">
+    G<sub>enc</sub>(s) = K<sub>enc</sub> = 2π/(N) · (1/T<sub>s</sub>) &nbsp;&nbsp;(si se mide frecuencia)
+  </div>
+  <p>Introduce un retardo de muestreo: e<sup>−sT</sup> ≈ 1/(1 + sT) para T pequeño.</p>
+
+  <div class="svg-box">
+    <img src="encoder.png" alt="Descripción del GIF">
+    <p style="font-size:.85rem;color:#555;">Encoder óptico incremental</p>
+  </div>
+
+  <!-- EJERCICIOS ENCODER -->
+  <h3>3.6 Ejercicios resueltos</h3>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 3.1 <span class="badge">Básico</span></h4>
+    <p>Un encoder incremental tiene N = 1024 pulsos/vuelta. Determine: (a) resolución angular; (b) ganancia K<sub>enc</sub> en pulsos/rad; (c) resolución con decodificación x4.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>(a)</strong> Δθ = 360°/1024 = <strong>0.3516°</strong> = 6.136×10⁻³ rad</div>
+      <div class="paso"><strong>(b)</strong> K_enc = N/2π = 1024/6.2832 = <strong>163 pulsos/rad</strong></div>
+      <div class="paso"><strong>(c)</strong> x4: Δθ = 360/(4·1024) = <strong>0.0879°</strong></div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 3.2 <span class="badge">Control</span></h4>
+    <p>Un encoder de 500 pulsos/vuelta se usa para medir velocidad por el método M con T = 100 ms. Si en ese tiempo se cuentan 250 pulsos, ¿cuál es la velocidad en rpm?</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> Vueltas en T: ΔN/N = 250/500 = 0.5 vueltas</div>
+      <div class="paso"><strong>Paso 2:</strong> ω = 2π·(ΔN/N)/T = 2π·0.5/0.1 = 31.416 rad/s</div>
+      <div class="paso"><strong>Paso 3:</strong> n = 31.416·60/(2π) = <strong>300 rpm</strong></div>
+      <div class="paso">Alternativa: 0.5 vueltas en 0.1 s → 5 vueltas/s → 300 rpm ✓</div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 3.3 <span class="badge">Avanzado</span></h4>
+    <p>Un encoder de 2000 pulsos/vuelta con decodificación x4 se usa en un lazo de control de posición. Si el controlador recibe 12,000 cuentas, ¿a qué ángulo corresponde?</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> Cuentas por vuelta con x4 = 4·2000 = 8000 cuentas/vuelta</div>
+      <div class="paso"><strong>Paso 2:</strong> θ = (12000/8000)·360° = 1.5·360°</div>
+      <div class="paso"><strong>Resultado:</strong> θ = <strong>540°</strong> = 1 vuelta y 180°</div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 3.4 <span class="badge">Control Avanzado</span></h4>
+    <p>Un motor con encoder de 1000 ppr (x4 = 4000 cuentas/vuelta) se muestrea a T<sub>s</sub> = 1 ms. Determine la ganancia del sensor en cuentas/rad·s si se usa como tacómetro digital (frecuencia).</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> K_enc = 4000/2π = 636.62 cuentas/rad</div>
+      <div class="paso"><strong>Paso 2:</strong> Si se mide frecuencia, la ganancia en cuentas por (rad/s) es:</div>
+      <div class="paso">K_v = K_enc · T_s = 636.62 · 0.001 = <strong>0.6366 cuentas/(rad/s)</strong></div>
+      <div class="paso">Esto significa que a 1 rad/s se acumulan ~0.64 cuentas por periodo de muestreo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. AMPLIFICADORES OPERACIONALES
+============================================================ -->
+<section id="opamps">
+  <h2> 4. Amplificadores Operacionales</h2>
+
+  <h3>4.1 Definición</h3>
+  <p>El <span class="highlight">amplificador operacional (op-amp)</span> es un amplificador diferencial de alta ganancia con dos entradas (inversora y no inversora) y una salida. Es la base de la instrumentación en sistemas de control.</p>
+
+  <h3>4.2 Características ideales</h3>
+  <table>
+    <tr><th>Parámetro</th><th>Ideal</th><th>Real (LM741)</th></tr>
+    <tr><td>Ganancia A<sub>ol</sub></td><td>∞</td><td>2×10⁵</td></tr>
+    <tr><td>Impedancia entrada</td><td>∞</td><td>2 MΩ</td></tr>
+    <tr><td>Impedancia salida</td><td>0</td><td>75 Ω</td></tr>
+    <tr><td>Ancho de banda</td><td>∞</td><td>1 MHz</td></tr>
+  </table>
+
+  <h3>4.3 Configuraciones básicas</h3>
+
+  <h4>a) Inversor</h4>
+  <div class="formula">
+    V<sub>out</sub> = −(R<sub>f</sub>/R<sub>in</sub>)·V<sub>in</sub> &nbsp;&nbsp;→&nbsp;&nbsp; G = −R<sub>f</sub>/R<sub>in</sub>
+  </div>
+
+  <h4>b) No inversor</h4>
+  <div class="formula">
+    V<sub>out</sub> = (1 + R<sub>f</sub>/R<sub>in</sub>)·V<sub>in</sub> &nbsp;&nbsp;→&nbsp;&nbsp; G = 1 + R<sub>f</sub>/R<sub>in</sub>
+  </div>
+
+  <h4>c) Seguidor de tensión</h4>
+  <div class="formula">V<sub>out</sub> = V<sub>in</sub> &nbsp;&nbsp;(G = 1)</div>
+
+  <h4>d) Sumador inversor</h4>
+  <div class="formula">V<sub>out</sub> = −R<sub>f</sub>·(V₁/R₁ + V₂/R₂ + ...)</div>
+
+  <h4>e) Diferenciador</h4>
+  <div class="formula">V<sub>out</sub> = −R·C·(dV<sub>in</sub>/dt)</div>
+
+  <h4>f) Integrador</h4>
+  <div class="formula">V<sub>out</sub> = −(1/RC)·∫V<sub>in</sub> dt</div>
+
+  <h3>4.4 Función de transferencia dinámica</h3>
+  <p>Un op-amp real tiene un polo dominante. Su ganancia en lazo abierto:</p>
+  <div class="formula">
+    A(s) = A<sub>0</sub> / (1 + s/ω<sub>p</sub>) &nbsp;&nbsp;≈&nbsp;&nbsp; ω<sub>t</sub>/s &nbsp;(para s >> ω<sub>p</sub>)
+  </div>
+  <p>Donde ω<sub>t</sub> = A<sub>0</sub>·ω<sub>p</sub> es el producto ganancia-ancho de banda (GBW).</p>
+
+  <h3>4.5 Aplicación en control: PID con op-amps</h3>
+  <p>Un controlador PID analógico se puede implementar con 2-3 op-amps. La función de transferencia:</p>
+  <div class="formula">
+    G<sub>c</sub>(s) = K<sub>p</sub> + K<sub>i</sub>/s + K<sub>d</sub>·s
+  </div>
+
+  <div class="svg-box">
+     <img src="opamp.png" alt="Descripción del GIF">
+    <p style="font-size:.85rem;color:#555;">Amplificador inversor básico</p>
+  </div>
+
+  <!-- EJERCICIOS OP-AMP -->
+  <h3>4.6 Ejercicios resueltos</h3>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 4.1 <span class="badge">Básico</span></h4>
+    <p>Diseñe un amplificador inversor con ganancia −10. Si R<sub>in</sub> = 1 kΩ, ¿cuál es R<sub>f</sub>? Si V<sub>in</sub> = 0.5 V, ¿V<sub>out</sub>?</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> G = −R_f/R_in = −10 → R_f = 10·1 kΩ = <strong>10 kΩ</strong></div>
+      <div class="paso"><strong>Paso 2:</strong> V_out = −10·0.5 = <strong>−5 V</strong></div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 4.2 <span class="badge">Control</span></h4>
+    <p>Se desea un controlador proporcional con ganancia K<sub>p</sub> = 5 usando un op-amp no inversor. Si R<sub>in</sub> = 2 kΩ, calcule R<sub>f</sub>.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> G = 1 + R_f/R_in = 5 → R_f/R_in = 4</div>
+      <div class="paso"><strong>Paso 2:</strong> R_f = 4·2 kΩ = <strong>8 kΩ</strong></div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 4.3 <span class="badge">Avanzado</span></h4>
+    <p>Un op-amp tiene GBW = 1 MHz y A<sub>0</sub> = 10⁵. Determine: (a) ω<sub>p</sub>; (b) ancho de banda en lazo cerrado si G = 100; (c) ganancia a 100 kHz en lazo abierto.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>(a)</strong> ω_p = GBW/A_0 = 10⁶/10⁵ = <strong>10 rad/s</strong></div>
+      <div class="paso"><strong>(b)</strong> BW_cl = GBW/G = 10⁶/100 = <strong>10 kHz</strong></div>
+      <div class="paso"><strong>(c)</strong> |A(jω)| = A_0/√(1+(ω/ω_p)²) = 10⁵/√(1+(10⁵/10)²) ≈ 10⁵/10⁴ = <strong>10</strong></div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 4.4 <span class="badge">Aplicado</span></h4>
+    <p>Diseñe un integrador con R = 10 kΩ y C = 1 μF. Si V<sub>in</sub> = 2 V constante durante 5 ms, ¿cuál es V<sub>out</sub>?</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> V_out = −(1/RC)·∫V_in dt = −(V_in/RC)·t</div>
+      <div class="paso"><strong>Paso 2:</strong> RC = 10⁴·10⁻⁶ = 0.01 s</div>
+      <div class="paso"><strong>Paso 3:</strong> V_out = −(2/0.01)·0.005 = <strong>−1 V</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. SISTEMAS DE CONTROL - GANANCIA Y FUNCIONAMIENTO
+============================================================ -->
+<section id="control">
+  <h2> 5. Sistemas de Control: Ganancia y Funcionamiento</h2>
+
+  <h3>5.1 Conceptos fundamentales</h3>
+  <p>En un lazo de control cerrado, la <strong>ganancia total</strong> determina la respuesta del sistema. Para un lazo con realimentación H(s):</p>
+
+  <div class="formula">
+    <strong>T(s) = G(s)·H(s) / [1 + G(s)·H(s)]</strong>
+  </div>
+
+  <p>Donde G(s) es la planta + controlador y H(s) es el sensor (potenciómetro, tacómetro, encoder).</p>
+
+  <h3>5.2 Ganancia de sensores</h3>
+  <table>
+    <tr><th>Sensor</th><th>Ganancia</th><th>Unidades</th><th>Función de transferencia</th></tr>
+    <tr><td>Potenciómetro</td><td>K<sub>p</sub> = V<sub>in</sub>/θ<sub>max</sub></td><td>V/rad</td><td>K<sub>p</sub></td></tr>
+    <tr><td>Tacómetro CC</td><td>K<sub>e</sub></td><td>V·s/rad</td><td>K<sub>e</sub>/(τs+1)</td></tr>
+    <tr><td>Encoder (posición)</td><td>K<sub>enc</sub> = N/2π</td><td>pulsos/rad</td><td>K<sub>enc</sub>·e<sup>−sT</sup></td></tr>
+    <tr><td>Encoder (velocidad)</td><td>K<sub>v</sub> = K<sub>enc</sub>·T<sub>s</sub></td><td>cuentas/(rad/s)</td><td>K<sub>v</sub>/(1+sT<sub>s</sub>)</td></tr>
+  </table>
+
+  <h3>5.3 Efecto de la ganancia en la respuesta</h3>
+  <ul>
+    <li><strong>Ganancia alta:</strong> menor error en estado estable, pero mayor sobreimpulso y posible inestabilidad.</li>
+    <li><strong>Ganancia baja:</strong> sistema estable pero error en estado estable grande.</li>
+    <li><strong>Ganancia crítica:</strong> límite de estabilidad (margen de ganancia).</li>
+  </ul>
+
+  <div class="formula">
+    Error en estado estable (tipo 0): e<sub>ss</sub> = 1/(1 + K<sub>p</sub>) &nbsp;&nbsp;donde K<sub>p</sub> = lim<sub>s→0</sub> G(s)H(s)
+  </div>
+
+  <h3>5.4 Ejemplo integrador: control de posición con encoder</h3>
+  <p>Sistema: Motor + encoder + controlador P.</p>
+  <div class="formula">
+    G(s) = K<sub>c</sub>·K<sub>m</sub>/[s(τs+1)] &nbsp;&nbsp;·&nbsp;&nbsp; H(s) = K<sub>enc</sub>
+  </div>
+  <div class="formula">
+    T(s) = K<sub>c</sub>K<sub>m</sub>K<sub>enc</sub> / [τs² + s + K<sub>c</sub>K<sub>m</sub>K<sub>enc</sub>]
+  </div>
+
+  <h3>5.5 Ejercicios de control integradores</h3>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 5.1 <span class="badge">Integrador</span></h4>
+    <p>Un motor de CC tiene G(s) = 5/[s(s+2)]. Se realimenta con un potenciómetro de ganancia K<sub>p</sub> = 0.5 V/rad y un controlador proporcional K<sub>c</sub>. Determine K<sub>c</sub> para que el sistema tenga ζ = 0.6.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> Lazo abierto: G(s)H(s) = K_c·0.5·5/[s(s+2)] = 2.5K_c/[s(s+2)]</div>
+      <div class="paso"><strong>Paso 2:</strong> Lazo cerrado: T(s) = 2.5K_c/(s² + 2s + 2.5K_c)</div>
+      <div class="paso"><strong>Paso 3:</strong> Comparando con s² + 2ζω_n s + ω_n²: 2ζω_n = 2 → ω_n = 2/(2·0.6) = 1.667 rad/s</div>
+      <div class="paso"><strong>Paso 4:</strong> ω_n² = 2.5K_c → K_c = 1.667²/2.5 = <strong>1.111</strong></div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 5.2 <span class="badge">Integrador</span></h4>
+    <p>Con el sistema anterior, calcule el error en estado estable para una entrada escalón unitario con K<sub>c</sub> = 1.111.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> Sistema tipo 1 (un polo en el origen) → error de posición nulo.</div>
+      <div class="paso"><strong>Paso 2:</strong> K_p = lim(s→0) G(s)H(s) = ∞</div>
+      <div class="paso"><strong>Paso 3:</strong> e_ss = 1/(1+K_p) = <strong>0</strong></div>
+      <div class="paso">El integrador del motor elimina el error de posición en estado estable.</div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 5.3 <span class="badge">Tacómetro</span></h4>
+    <p>Un motor con G(s) = 10/[s(s+1)] se controla con realimentación de velocidad usando un tacómetro K<sub>t</sub> = 0.2 V·s/rad. La referencia es velocidad. Determine la función de transferencia de lazo cerrado y el error en estado estable para entrada escalón.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> H(s) = K_t = 0.2</div>
+      <div class="paso"><strong>Paso 2:</strong> T(s) = G/(1+GH) = 10/[s(s+1)] / (1 + 2/[s(s+1)])</div>
+      <div class="paso"><strong>Paso 3:</strong> T(s) = 10/(s² + s + 2)</div>
+      <div class="paso"><strong>Paso 4:</strong> Sistema tipo 1 → e_ss = 0 para escalón de velocidad.</div>
+      <div class="paso">ω_n = √2 = 1.414 rad/s; ζ = 1/(2·1.414) = 0.354</div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 5.4 <span class="badge">Encoder</span></h4>
+    <p>Un encoder de 2000 ppr (x4) se usa para medir posición. El controlador tiene K<sub>c</sub> = 2 V/cuenta. Si la planta es G(s) = 100/[s(s+5)], determine la ganancia de lazo y el error de posición.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> K_enc = 4·2000/2π = 1273.24 cuentas/rad</div>
+      <div class="paso"><strong>Paso 2:</strong> Ganancia de lazo: L(s) = K_c·K_enc·100/[s(s+5)] = 2·1273.24·100/[s(s+5)]</div>
+      <div class="paso"><strong>Paso 3:</strong> L(s) = 254648/[s(s+5)]</div>
+      <div class="paso"><strong>Paso 4:</strong> Sistema tipo 1 → e_ss = 0 para posición (escalón).</div>
+      <div class="paso"><strong>Paso 5:</strong> ω_n = √254648 = 504.6 rad/s; ζ = 5/(2·504.6) = 0.005 → sistema muy oscilatorio. Se requiere compensación.</div>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h4> Ejercicio 5.5 <span class="badge">Integrador Total</span></h4>
+    <p>Diseñe un controlador PID con op-amps para el sistema G(s) = 4/[s(s+2)] con realimentación unitaria, de modo que ζ = 0.7 y ω<sub>n</sub> = 5 rad/s. Determine K<sub>p</sub>, K<sub>i</sub>, K<sub>d</sub>.</p>
+    <button class="btn-sol" onclick="toggle(this)"> Ver solución</button>
+    <div class="solucion">
+      <div class="paso"><strong>Paso 1:</strong> PID: G_c(s) = K_p + K_i/s + K_d·s</div>
+      <div class="paso"><strong>Paso 2:</strong> Lazo abierto: G_c·G = (K_p + K_i/s + K_d·s)·4/[s(s+2)]</div>
+      <div class="paso"><strong>Paso 3:</strong> Lazo cerrado característico: s³ + 2s² + 4K_d·s² + 4K_p·s + 4K_i = 0</div>
+      <div class="paso"><strong>Paso 4:</strong> Polinomio deseado (ζ=0.7, ω_n=5, polo real en −10): (s+10)(s²+7s+25) = s³ + 17s² + 95s + 250</div>
+      <div class="paso"><strong>Paso 5:</strong> Comparando: 4K_i = 250 → K_i = 62.5</div>
+      <div class="paso">4K_p = 95 → K_p = 23.75</div>
+      <div class="paso">2 + 4K_d = 17 → K_d = 3.75</div>
+      <div class="paso"><strong>Resultado:</strong> K_p = 23.75, K_i = 62.5, K_d = 3.75</div>
+    </div>
+  </div>
+
+  <h3>5.6 Resumen comparativo</h3>
+  <table>
+    <tr><th>Sensor</th><th>Tipo</th><th>Ganancia</th><th>Ventaja</th><th>Desventaja</th></tr>
+    <tr><td>Potenciómetro</td><td>Analógico</td><td>V/rad</td><td>Simple, económico</td><td>Desgaste, ruido</td></tr>
+    <tr><td>Tacómetro CC</td><td>Analógico</td><td>V·s/rad</td><td>Salida directa de ω</td><td>Escobillas, mantenimiento</td></tr>
+    <tr><td>Encoder incr.</td><td>Digital</td><td>pulsos/rad</td><td>Alta precisión</td><td>Necesita contador</td></tr>
+    <tr><td>Encoder abs.</td><td>Digital</td><td>2ⁿ pos.</td><td>Posición absoluta</td><td>Más costoso</td></tr>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  <p>Curso sobre sensores y sistemas de control</p>
+  <p style="font-size:.85rem;margin-top:8px;">Potenciómetros · Tacómetros · Encoders · Amplificadores Operacionales</p>
+  <p style="font-size:.8rem;margin-top:8px;opacity:.7;">Haz clic en "Ver solución" en cada ejercicio para desplegar el procedimiento completo</p>
+</footer>
+
+<script>
+  function toggle(btn){
+    const sol = btn.nextElementSibling;
+    if(sol.classList.contains('show')){
+      sol.classList.remove('show');
+      btn.textContent = 'Ver solución';
+    } else {
+      sol.classList.add('show');
+      btn.textContent = 'Ocultar solución';
+    }
+  }
+</script>
+
+</body>
+</html>
